@@ -149,11 +149,30 @@ export class MetricsCollector {
     try {
       return await pTimeout(
         (async () => {
+          // const context = await playwright.chromium.launchPersistentContext(
+          //   '/Users/raghav/Library/Application Support/Google/Chrome',
+          //   {
+          //     channel: 'chrome',
+          //     headless: this._options.headless,
+          //     userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36',
+          //   },
+          // );
+          // const context = await browser.newContext({
+          //   ...(scenario.storageState ? { storageState: scenario.storageState } : {}),
+          // });
+          // const browser = context.browser()!;
+
           const browser = await playwright.chromium.launch({
             headless: this._options.headless,
+            channel: 'chrome',
           });
           const context = await browser.newContext({
             ...(scenario.storageState ? { storageState: scenario.storageState } : {}),
+            userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36',
+            extraHTTPHeaders: {
+              "priority": "u=1, i",
+              "sec-ch-ua": "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\"",
+            },
           });
           disposeCallbacks.push(() => browser.close());
           const page = await context.newPage();
@@ -215,8 +234,12 @@ export class MetricsCollector {
             networkCollector.getData(),
           );
         })(),
-        { milliseconds: 60 * 1000 },
+        { milliseconds: 10 * 60 * 1000 },
       );
+    } catch (e) {
+      console.error('Failed to collect metrics');
+      console.error(e);
+      throw e;
     } finally {
       console.log('Disposing of browser and resources');
       disposeCallbacks.reverse();
