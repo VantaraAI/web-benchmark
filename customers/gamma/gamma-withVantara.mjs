@@ -3,15 +3,15 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 async function loginAndWaitForHomepage(page, username) {
-  await page.goto("https://staging.gamma.app/");
-  await page.pause();
-  await page.waitForTimeout(Math.floor(Math.random() * 4000 + 1000));
+  await page.goto("https://vantara.staging.gamma.app/signin");
+  // await page.pause();
+  // await page.waitForTimeout(Math.floor(Math.random() * 4000 + 1000));
 
   await page.getByRole("textbox", { name: "Email" }).click();
   await page.getByRole("textbox", { name: "Email" }).fill(username, { delay: 120 });
   await page
     .getByRole("textbox", { name: "Password" })
-    .fill("", { delay: 120 });
+    .fill("QJQ7xuq-hvg5zdp5qbp", { delay: 120 });
   await page.getByRole("textbox", { name: "Password" }).press("Tab");
   await page.getByRole("button", { name: "Sign in" }).click();
 
@@ -54,11 +54,12 @@ async function runKitchenSinkTest(page, username) {
     .click();
 }
 
-// export class KitchenSinkWithoutVantaraScenario {
-//   async run(browser, page) {
-//     await runKitchenSinkTest(page, "admin@vantara.ai");
-//   }
-// }
+export class KitchenSinkWithoutVantaraScenario {
+  async run(browser, page) {
+    await page.pause();
+    await runKitchenSinkTest(page, "admin@vantara.ai");
+  }
+}
 
 // export class KitchenSinkWithVantaraScenario {
 //   async run(browser, page) {
@@ -112,11 +113,11 @@ async function runGenerateContentTest(page, username) {
   await page.getByRole("button", { name: "It's great" }, { timeout: 60 * 1000 }).click();
 }
 
-export class GenerateContentWithoutVantaraScenario {
-  async run(browser, page) {
-    await runGenerateContentTest(page, "admin@vantara.ai");
-  }
-}
+// export class GenerateContentWithoutVantaraScenario {
+//   async run(browser, page) {
+//     await runGenerateContentTest(page, "admin@vantara.ai");
+//   }
+// }
 
 // export class GenerateContentWithVantaraScenario {
 //   async run(browser, page) {
